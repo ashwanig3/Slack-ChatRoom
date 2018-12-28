@@ -12,3 +12,116 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+// =====================================
+// Dashboard
+// =====================================
+
+
+.hero-section {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  height: 100vh;
+  .left-sidebar {
+    border-right: 1px solid grey;
+    background-color: #330033;
+    color: white;
+    .group-msg {
+      border-bottom: 1px solid grey;
+      line-height: 2rem;
+      height: 30vh;
+    }
+    .direct-msg {
+      line-height: 2rem;
+    }
+  }
+}
+.right-sidebar {
+  position: relative;
+   form {
+    position: fixed;
+    bottom: 0;
+    width: 80%;
+    display: flex;
+    input {
+      width: 90%;
+      padding: 10px;
+      border: 5px solid #330033;
+      font-size: 20px;
+    }
+    button {
+      width: 7%;
+      padding: 15px 10px;
+      background-color: #330033;
+      border: 5px solid #330033;
+    }
+  }
+  .right-sidebar_header {
+    border-bottom: 1px solid grey;
+    padding: 10px;
+    h2 {
+      margin: 0;
+    }
+  }
+  .all-msg {
+    padding: 10px 30px;
+  }
+}
+
+// =====================================
+// SignupForm
+// ======================================
+
+.signup-container,
+.login-container {
+  background-color: #330033;
+  height: 100vh;
+  position: relative;
+  header {
+    padding: 20px;
+    h1 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 20px;
+      color: white;
+    }
+  }
+  
+  .signup-form {
+    margin: 0 auto;
+    width: 35%;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    h1 {
+      margin: 0;
+      font-weight: 300;
+      text-align: center;
+      color: white;
+    }
+  }
+  input, button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 0.5px solid black;
+    margin-top: 20px;
+    box-sizing: border-box;
+    display: block;
+  }
+  button {
+    background-color: #330033;
+    margin-bottom: 10px;
+  }
+  button:hover {
+    color: white;
+  }
+  .signup-link {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+  }
+  .signup-link:hover {
+    text-decoration: underline;
+  }
+}
