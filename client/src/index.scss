@@ -67,6 +67,29 @@ code {
     padding: 10px 30px;
   }
 }
+.member {
+  color: #330033;
+  font-weight: 600;
+}
+.members {
+  display: block;
+  color: white;
+}
+.right-sidebar_header {
+  display: flex;
+  justify-content: space-between;
+  h4 {
+    margin: 0;
+  }
+  button {
+    border: none;
+    background-color: white;
+    font-weight: 500;
+  }
+  button:hover {
+    text-decoration: underline;
+  }
+}
 
 // =====================================
 // SignupForm

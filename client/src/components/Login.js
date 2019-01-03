@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect, Link } from 'react-router-dom';
-import { logInAction } from '../actions/actions';
+import { logInAction, whoAmI } from '../actions/actions';
 
 class Login extends Component {
     state = {
         username: '',
         password: ''
         
+    }
+    componentWillMount = () => {
+        this.props.dispatch(whoAmI())
     }
    handleChange = (e) => {
        this.setState({

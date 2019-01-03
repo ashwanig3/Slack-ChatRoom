@@ -1,6 +1,11 @@
 const initState = {
     currentUserData: {},
-    currentUserId: ''
+    currentUserId: '',
+    memberData: '',
+    allMembers: [],
+    currentMember: {
+        allMsg: []
+    }
 }
 
 export default function rootReducer(state=initState, action) {
@@ -11,8 +16,37 @@ export default function rootReducer(state=initState, action) {
                 userData: []
             }
             return {
+                ...state,
                 currentUserData: user,
                 currentUserId: action.data._id
+            }
+        }
+        case 'SUCCESSFULLY_JOIN': {
+            return {
+                ...state,
+                memberData: action.data
+            }
+        }
+        case 'ALL_MEMBERS': {
+            return {
+                ...state,
+                allMembers: action.data
+            }
+        }
+        case 'GET_MESSAGES': {
+            return {
+                ...state,
+                currentMember: {
+                    ...state.currentMember,
+                    allMsg: action.data
+                }
+            }
+        }
+        case 'LOGOUT_SUCCESS': {
+            return {
+                ...state,
+                currentUserData: {},
+                currentUserId: ''
             }
         }
         default:

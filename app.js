@@ -28,7 +28,7 @@ app.use(session({
   cookie: {
     maxAge: 36000000
   },
-  store: new MongoStore({ url: 'mongodb://localhost/todos-session' }),
+  store: new MongoStore({ url: 'mongodb://localhost/slack-session' }),
   resave: true,
   saveUninitialized: true,
   
@@ -56,12 +56,14 @@ if(process.env.NODE_ENV === 'development') {
     console.log('a user connected');
 
     socket.on('chatting', (data) => {
-      console.log(data)
       io.sockets.emit('chatting', data)
+    })
+    socket.on('directMessage', (data) => {
+      io.sockets.emit('directMessage', data)
     })
   });
 
-  require('./server/modules/passport')(passport)
+require('./server/modules/passport')(passport)
 
 
 app.use(require('./server/routes/routes'))

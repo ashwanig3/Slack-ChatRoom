@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import io from 'socket.io-client';
+import { postMsg, joinChannel, getAllMembers, getMessages, signedOut } from '../actions/actions';
+
 const socket = io('http://localhost:4400/');
 
 class Dashboard extends Component {
@@ -14,17 +16,56 @@ class Dashboard extends Component {
       msg: e.target.value
     })
   }
+  componentWillMount = () => {
+    this.props.dispatch(getAllMembers())
+    this.props.dispatch(getMessages())
+
+  }
+  
+
   handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit('chatting',this.state.msg);
+    socket.emit('chatting',{
+      msg: this.state.msg,
+      authorName: this.props.userData.name
+    });
+    document.getElementById('msg-box').value = '';
+    this.props.dispatch(postMsg({
+      msg: this.state.msg,
+      memberId: this.props.memberId._id,
+      memberName: this.props.memberId.name
+    }))
+  }
+  
+  getMessageFromServer = (() => {
     socket.on('chatting', (data) => 
     this.setState({
       allMsg: [...this.state.allMsg, data]
     }))
+  })()
+
+  handleClick = (e) => {
+    e.preventDefault();
+    this.props.dispatch(joinChannel({
+      name: this.props.userData.name,
+      email: this.props.userData.email
+    }))
   }
+  handleSignOut = (e) => {
+    e.preventDefault();
+    this.props.dispatch(signedOut())
+  }
+
   render() {
-    const { userId } = this.props;
+    const { userId, allMembers, messages, userData, memberId } = this.props;
     const { allMsg } = this.state;
+    let item;
+    if(memberId) {
+      item = <form onSubmit={this.handleSubmit}>
+      <input id="msg-box" type="text" placeholder="type here" onChange={this.handleChange} />
+      <button type="submit">Send</button>
+   </form>
+    } else {item = <div></div>}
     if(!userId) {
       return <Redirect to='/login' />
     } else {
@@ -35,28 +76,34 @@ class Dashboard extends Component {
               <ul className="group-msg">
                 <span>Channels</span>
                 <li>#Batch1</li>
-                <li>#Batch2</li>
+                <button type="submit" onClick={this.handleClick}>Join Chat</button>
               </ul>
               <ul className="direct-msg">
                 <span>Direct messages</span>
-                <li>Praveen</li>
-                <li>Madhusudan</li>
-                <li>Komal</li>
+                {
+                  allMembers && allMembers.map(member => <Link to={`/direct/${member.name}`} className="members">{member.name}</Link>)
+                }
               </ul>
             </div>
             <div className="right-sidebar">
                 <div className="right-sidebar_header">
                   <h2>#Batch1</h2>
+                  <div>
+                   <h4>{userData.name}</h4> 
+                  <button onClick ={this.handleSignOut}>Signout from Batch1</button>
+                  </div>
                 </div>
                 <div className="all-msg">
+                {
+                  messages && messages.map(msg => <p><span className="member">{msg.memberName}:</span> {msg.msg}</p>)
+                }
                   {
-                    allMsg && allMsg.map(msg => <p>{msg}</p>)
+                    allMsg && allMsg.map(msg => <p><span className="member">{msg.authorName}:</span> {msg.msg}</p>)
                   }
                 </div>
-                <form onSubmit={this.handleSubmit}>
-                   <input type="text" placeholder="type here" onChange={this.handleChange} />
-                   <button type="submit">Send</button>
-                </form>
+                {
+                  item
+                }
             </div>
           </div>
           
@@ -69,7 +116,11 @@ class Dashboard extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.currentUserId
+    userId: state.currentUserId,
+    userData: state.currentUserData.userInfo,
+    memberId: state.memberData,
+    allMembers: state.allMembers,
+    messages: state.currentMember.allMsg
   }
 }
 
