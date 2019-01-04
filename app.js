@@ -52,16 +52,32 @@ if(process.env.NODE_ENV === 'development') {
     app.use(require('webpack-hot-middleware')(compiler));
   }
 
+  const users = {}
   io.on('connection', function(socket){
     console.log('a user connected');
 
     socket.on('chatting', (data) => {
+      console.log(data)
       io.sockets.emit('chatting', data)
     })
-    socket.on('directMessage', (data) => {
-      io.sockets.emit('directMessage', data)
+
+    socket.on('online', (username) => {
+      users[username] = socket.id;
+      // io.emit('userList', users, users[users.length].id);
     })
+    socket.on('sendMsg', (data) => {
+      socket.emit('sendMsg', data)
+    })
+
+    socket.on('getMsg', (data) => {
+      socket.broadcast.to(users[data.to]).emit('getMsg',{
+      msg:data.msg,
+      from:data.from
+      });
+      });
+
   });
+
 
 require('./server/modules/passport')(passport)
 

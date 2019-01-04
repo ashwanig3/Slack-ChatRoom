@@ -1,7 +1,7 @@
 const initState = {
     currentUserData: {},
     currentUserId: '',
-    memberData: '',
+    memberData: null,
     allMembers: [],
     currentMember: {
         allMsg: []

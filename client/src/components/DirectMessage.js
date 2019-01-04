@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import { connect } from 'react-redux';
+import socket from '../socket.io';
 
-const socket = io('http://localhost:4400/');
+// const socket = io('http://localhost:4400/');
 
 class DirectMessage extends Component {
   state = {
@@ -14,20 +15,36 @@ class DirectMessage extends Component {
       msg: e.target.value
     })
   }
+ 
   handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit('directMessage',{
+    socket.emit('getMsg',{
       msg: this.state.msg,
-      from: this.props.userData.name
+      from: this.props.userData.username,
+      to: this.props.match.params.name
+    });
+    socket.emit('sendMsg', {
+      msg: this.state.msg,
+      from: this.props.userData.username
     });
     document.getElementById('msg-box').value = '';
+    // this.props.dispatch(postDirectMsg({
+    //   msg: this.state.msg,
+    //   from: 
+    // }))
   }
 
   getMessageFromServer = (() => {
-    socket.on('directMessage', (data) => 
+    socket.on('getMsg', (data) => 
     this.setState({
       directMassages: [...this.state.directMassages, data]
-    }))
+    })
+    )
+    socket.on('sendMsg', (data) => 
+    this.setState({
+      directMassages: [...this.state.directMassages, data]
+    })
+    )
   })()
 
   render() {
@@ -44,7 +61,7 @@ class DirectMessage extends Component {
                 </div>
                 <div className="all-msg">
                 {
-                  directMassages && directMassages.map(msg => <p><span className="member">{this.props.match.params.name}: </span>{msg.msg}</p>)
+                  directMassages && directMassages.map(msg => <p><span className="member">{msg.from}: </span>{msg.msg}</p>)
                 }
                  <form onSubmit={this.handleSubmit}>
                       <input id="msg-box" type="text" placeholder="type here" onChange={this.handleChange} />
@@ -59,7 +76,8 @@ class DirectMessage extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userData: state.currentUserData.userInfo
+    userData: state.currentUserData.userInfo,
+    allMembers: state.allMembers
   }
 }
 

@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom'
-import io from 'socket.io-client';
-import { postMsg, joinChannel, getAllMembers, getMessages, signedOut } from '../actions/actions';
+import { Redirect, Link } from 'react-router-dom';
 
-const socket = io('http://localhost:4400/');
+// import io from 'socket.io-client';
+import { postMsg, joinChannel, getAllMembers, getMessages, signedOut } from '../actions/actions';
+import socket from '../socket.io';
+
+
+// const socket = io('http://localhost:4400/');
 
 class Dashboard extends Component {
   state = {
@@ -17,11 +20,12 @@ class Dashboard extends Component {
     })
   }
   componentWillMount = () => {
-    this.props.dispatch(getAllMembers())
     this.props.dispatch(getMessages())
 
   }
-  
+  componentDidUpdate = () => {
+    socket.emit('online', this.props.userData.name)
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -38,10 +42,12 @@ class Dashboard extends Component {
   }
   
   getMessageFromServer = (() => {
-    socket.on('chatting', (data) => 
-    this.setState({
-      allMsg: [...this.state.allMsg, data]
-    }))
+    socket.on('chatting', (data) => {
+      console.log(data);
+      this.setState({
+        allMsg: [...this.state.allMsg, data]
+      })
+    })
   })()
 
   handleClick = (e) => {
@@ -50,6 +56,7 @@ class Dashboard extends Component {
       name: this.props.userData.name,
       email: this.props.userData.email
     }))
+    this.props.dispatch(getAllMembers())
   }
   handleSignOut = (e) => {
     e.preventDefault();
