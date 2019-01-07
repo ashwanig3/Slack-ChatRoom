@@ -59,7 +59,6 @@ export const signUpAction = (data) => {
   }
 
   export function joinChannel(data) {
-    console.log(data)
     return dispatch => {
       fetch(`${url}/join`, {
         method : "POST", 
@@ -69,7 +68,6 @@ export const signUpAction = (data) => {
         body : JSON.stringify(data)
       }).then(res => res.json())
       .then(data => {
-        console.log(data)
         dispatch({type: 'SUCCESSFULLY_JOIN', data: data.user})
       })
     }
@@ -111,6 +109,32 @@ export const signUpAction = (data) => {
       fetch('/api/logout').then(res => res.json())
       .then(data => {
         dispatch({type: 'LOGOUT_SUCCESS', data})
+      })
+    }
+  }
+
+  export function postDirectMsg(data) {
+    return dispatch => {
+      fetch(`${url}/direct`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(body => console.log(body))
+    }
+  }
+
+  export function getAllDirectMsg(from, to) {
+    console.log(from, to)
+    return dispatch => {
+      fetch(`${url}/${from}/direct/${to}`)
+      .then(res => res.json())
+      .then(data => {
+        dispatch({type: 'GET_DIRECT_MSG', data: data.allMsg})
       })
     }
   }

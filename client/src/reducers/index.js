@@ -5,7 +5,8 @@ const initState = {
     allMembers: [],
     currentMember: {
         allMsg: []
-    }
+    },
+    directMsgs:[]
 }
 
 export default function rootReducer(state=initState, action) {
@@ -47,6 +48,12 @@ export default function rootReducer(state=initState, action) {
                 ...state,
                 currentUserData: {},
                 currentUserId: ''
+            }
+        }
+        case 'GET_DIRECT_MSG': {
+            return {
+                ...state,
+                directMsgs: action.data
             }
         }
         default:

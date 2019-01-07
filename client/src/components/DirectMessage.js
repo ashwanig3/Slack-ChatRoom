@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-// import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import socket from '../socket.io';
+import { postDirectMsg, getAllDirectMsg } from '../actions/actions';
 
-// const socket = io('http://localhost:4400/');
 
 class DirectMessage extends Component {
   state = {
@@ -28,10 +27,19 @@ class DirectMessage extends Component {
       from: this.props.userData.username
     });
     document.getElementById('msg-box').value = '';
-    // this.props.dispatch(postDirectMsg({
-    //   msg: this.state.msg,
-    //   from: 
-    // }))
+    const from = this.props.allMembers.filter(member => member.email === this.props.userData.email)
+    const to = this.props.allMembers.filter(member => member.name === this.props.match.params.name)
+    this.props.dispatch(postDirectMsg({
+      msg: this.state.msg,
+      from: from[0]._id,
+      to: to[0]._id
+    }))
+  }
+
+  componentWillMount = () => {
+    const from = this.props.allMembers.filter(member => member.email === this.props.userData.email)
+    const to = this.props.allMembers.filter(member => member.name === this.props.match.params.name)
+    this.props.dispatch(getAllDirectMsg(from[0]._id, to[0]._id))
   }
 
   getMessageFromServer = (() => {
@@ -49,6 +57,7 @@ class DirectMessage extends Component {
 
   render() {
     const { directMassages } = this.state;
+    const { directMsgs } = this.props;
     return (
       <div>
         <div className="right-sidebar">
@@ -60,6 +69,9 @@ class DirectMessage extends Component {
                   </div>
                 </div>
                 <div className="all-msg">
+                {
+                  directMsgs && directMsgs.map(msg => <p><span className="member">{this.props.userData.username}: </span>{msg.msg}</p>)
+                }
                 {
                   directMassages && directMassages.map(msg => <p><span className="member">{msg.from}: </span>{msg.msg}</p>)
                 }
@@ -77,7 +89,8 @@ class DirectMessage extends Component {
 const mapStateToProps = (state) => {
   return {
     userData: state.currentUserData.userInfo,
-    allMembers: state.allMembers
+    allMembers: state.allMembers,
+    directMsgs: state.directMsgs
   }
 }
 
