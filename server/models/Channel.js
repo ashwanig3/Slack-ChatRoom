@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const channelSchema = new Schema({
-    member: [{ref: 'Member'}]
+    name: String,
+    members: [{ref: 'Users'}]
 })
 
 const Channel = mongoose.model('Channel', channelSchema);

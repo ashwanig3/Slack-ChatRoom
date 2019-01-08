@@ -6,7 +6,8 @@ module.exports = {
         const newMsg = new DirectMsg({
             msg: reqBody.msg,
             from: reqBody.from,
-            to: reqBody.to
+            to: reqBody.to,
+            author: reqBody.author
         })
         newMsg.save((err) => {
             if(err) throw err;
@@ -18,10 +19,14 @@ module.exports = {
     getDirectMsg: (req, res) => {
         const msgFrom = req.params.from;
         const msgTo = req.params.to;
-        DirectMsg.find({from: msgFrom, to: msgTo}, (err, allMsg) => {
-            console.log(allMsg)
-            if(err) throw err;
-            res.json({allMsg})
-        })
+    DirectMsg.find({
+        $or: [
+            {from: msgFrom, to: msgTo},
+            {from: msgTo, to: msgFrom}
+        ]
+    }, (err, allMsg) => {
+        if(err) throw err;
+        res.json({allMsg})
+    })
     }
 }

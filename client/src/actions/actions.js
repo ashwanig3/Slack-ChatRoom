@@ -134,6 +134,7 @@ export const signUpAction = (data) => {
       fetch(`${url}/${from}/direct/${to}`)
       .then(res => res.json())
       .then(data => {
+        console.log(data)
         dispatch({type: 'GET_DIRECT_MSG', data: data.allMsg})
       })
     }

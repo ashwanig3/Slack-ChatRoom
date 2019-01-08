@@ -23,7 +23,7 @@ class Dashboard extends Component {
     this.props.dispatch(getMessages())
 
   }
-  componentDidUpdate = () => {
+  componentWillUpdate = () => {
     socket.emit('online', this.props.userData.name)
   }
 
@@ -81,12 +81,12 @@ class Dashboard extends Component {
           <div className="hero-section">
             <div className="left-sidebar">
               <ul className="group-msg">
-                <span>Channels</span>
+                <span className="subheading">Channels</span>
                 <li>#Batch1</li>
                 <button type="submit" onClick={this.handleClick}>Join Chat</button>
               </ul>
               <ul className="direct-msg">
-                <span>Direct messages</span>
+                <span className="subheading">Direct messages</span>
                 {
                   allMembers && allMembers.map(member => <Link to={`/direct/${member.name}`} className="members">{member.name}</Link>)
                 }

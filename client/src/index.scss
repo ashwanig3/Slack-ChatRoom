@@ -74,10 +74,15 @@ code {
 .members {
   display: block;
   color: white;
+  text-decoration: none;
+}
+.members:hover {
+  text-decoration: underline;
 }
 .right-sidebar_header {
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 0 7px .5px #bdc0c8;
   h4 {
     margin: 0;
   }
@@ -91,6 +96,26 @@ code {
   }
 }
 
+.top-nav-bar {
+  display: flex;
+}
+.dashboard-link {
+  color: black;
+  text-decoration: none;
+  font-weight: 600;
+}
+.dashboard-link:hover {
+  text-decoration: underline;
+}
+.link-wrapper {
+  margin: 2px 20px 0 0;
+}
+.direct-form {
+  width: 100%;
+}
+.subheading {
+  font-weight: 600;
+}
 // =====================================
 // SignupForm
 // ======================================
