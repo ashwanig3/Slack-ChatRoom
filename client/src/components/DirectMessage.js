@@ -22,7 +22,7 @@ class DirectMessage extends Component {
       msg: this.state.msg,
       author: this.props.userData.name,
       from: this.props.userData.username,
-      to: this.props.match.params.name
+      to: this.props.match.params.username
     });
     socket.emit('sendMsg', {
       msg: this.state.msg,
@@ -31,7 +31,7 @@ class DirectMessage extends Component {
     });
     document.getElementById('msg-box').value = '';
     const from = this.props.allMembers.filter(member => member.email === this.props.userData.email)
-    const to = this.props.allMembers.filter(member => member.name === this.props.match.params.name)
+    const to = this.props.allMembers.filter(member => member.username === this.props.match.params.username)
     this.props.dispatch(postDirectMsg({
       msg: this.state.msg,
       from: from[0]._id,
@@ -42,7 +42,7 @@ class DirectMessage extends Component {
 
   componentWillMount = () => {
     const from = this.props.allMembers.filter(member => member.email === this.props.userData.email)
-    const to = this.props.allMembers.filter(member => member.name === this.props.match.params.name)
+    const to = this.props.allMembers.filter(member => member.username === this.props.match.params.username)
     this.props.dispatch(getAllDirectMsg(from[0]._id, to[0]._id))
   }
 
@@ -75,7 +75,7 @@ class DirectMessage extends Component {
         <div>
           <div className="right-sidebar">
                   <div className="right-sidebar_header">
-                    <h2>{this.props.match.params.name}</h2>
+                    <h2>{this.props.match.params.username}</h2>
                     <div className="top-nav-bar">
                       <div className='link-wrapper'>
                         <Link to='/' className="dashboard-link">Dashboard</Link>

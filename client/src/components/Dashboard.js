@@ -1,43 +1,45 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
-
-// import io from 'socket.io-client';
-import { postMsg, joinChannel, getAllMembers, getMessages, signedOut } from '../actions/actions';
+import { postMsg, getAllMembers, getMessages, signedOut, addChannels, getAllChannels } from '../actions/actions';
 import socket from '../socket.io';
-
-
-// const socket = io('http://localhost:4400/');
+import GroupMsgs from './GroupMsgs';
 
 class Dashboard extends Component {
   state = {
     msg: '',
-    allMsg: []
+    channelName: '',
+    allMsg: [],
+    isClicked: 
+    false,
+    isLoading : false
   }
   handleChange = (e) => {
     this.setState({
-      msg: e.target.value
+      [e.target.name]: e.target.value
     })
   }
   componentWillMount = () => {
+    this.props.dispatch(getAllChannels())
     this.props.dispatch(getMessages())
+    this.props.dispatch(getAllMembers())
 
   }
   componentWillUpdate = () => {
-    socket.emit('online', this.props.userData.name)
+    socket.emit('online', this.props.userData.username)
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
     socket.emit('chatting',{
       msg: this.state.msg,
-      authorName: this.props.userData.name
+      username: this.props.userData.username
     });
     document.getElementById('msg-box').value = '';
     this.props.dispatch(postMsg({
       msg: this.state.msg,
-      memberId: this.props.memberId._id,
-      memberName: this.props.memberId.name
+      userId: this.props.userData._id,
+      username: this.props.userData.username
     }))
   }
   
@@ -49,46 +51,70 @@ class Dashboard extends Component {
       })
     })
   })()
-
-  handleClick = (e) => {
-    e.preventDefault();
-    this.props.dispatch(joinChannel({
-      name: this.props.userData.name,
-      email: this.props.userData.email
-    }))
-    this.props.dispatch(getAllMembers())
-  }
   handleSignOut = (e) => {
     e.preventDefault();
     this.props.dispatch(signedOut())
   }
 
+  handleAdd = (e) => {
+    e.preventDefault();
+    this.setState({
+      isClicked: !this.state.isClicked
+    })
+  }
+  handleAddChannels = (e) => {
+    e.preventDefault();
+    this.setState({
+      isLoading : true
+    })
+    this.props.dispatch(addChannels({
+      channelName: this.state.channelName,
+      createdBy: this.props.userId
+    }, (isSucced) => {
+      if(isSucced) {
+        this.setState({
+          isLoading : false
+        })  
+      }
+    }))
+    this.setState({
+      isClicked: !this.state.isClicked
+    })
+  }
+
   render() {
-    const { userId, allMembers, messages, userData, memberId } = this.props;
-    const { allMsg } = this.state;
-    let item;
-    if(memberId) {
-      item = <form onSubmit={this.handleSubmit}>
-      <input id="msg-box" type="text" placeholder="type here" onChange={this.handleChange} />
-      <button type="submit">Send</button>
-   </form>
-    } else {item = <div></div>}
+    const { userId, allMembers, messages, userData, memberId, allChannels } = this.props;
+    const { allMsg, isClicked, isLoading } = this.state;
+    let addChannelForm;
+    if(isClicked === true) {
+      addChannelForm = <form onSubmit={this.handleAddChannels}>
+        <input type="text" placeholder="Enter Channel Name" name="channelName" onChange={this.handleChange} />
+      </form>
+    } 
     if(!userId) {
       return <Redirect to='/login' />
     } else {
       return (
-        <div className="dashboard">
+        isLoading ? <p>Loading...</p> : (
+          <div className="dashboard">
           <div className="hero-section">
             <div className="left-sidebar">
               <ul className="group-msg">
-                <span className="subheading">Channels</span>
-                <li>#Batch1</li>
-                <button type="submit" onClick={this.handleClick}>Join Chat</button>
+                <div>
+                  <span className="subheading">Channels</span>
+                  <i class="fas fa-plus-circle" onClick={this.handleAdd}></i>
+                </div>
+                {
+                  addChannelForm
+                }
+                {
+                  allChannels && allChannels.map((channel, i) => <li key={i}>#{channel.channelName}</li>)
+                }
               </ul>
               <ul className="direct-msg">
                 <span className="subheading">Direct messages</span>
                 {
-                  allMembers && allMembers.map(member => <Link to={`/direct/${member.name}`} className="members">{member.name}</Link>)
+                  allMembers && allMembers.map((member,i) => <Link to={`/direct/${member.username}`} key={i} className="members">{member.name}</Link>)
                 }
               </ul>
             </div>
@@ -101,20 +127,17 @@ class Dashboard extends Component {
                   </div>
                 </div>
                 <div className="all-msg">
-                {
-                  messages && messages.map(msg => <p><span className="member">{msg.memberName}:</span> {msg.msg}</p>)
-                }
-                  {
-                    allMsg && allMsg.map(msg => <p><span className="member">{msg.authorName}:</span> {msg.msg}</p>)
-                  }
+                    <GroupMsgs messages={messages} allMsg={allMsg} />
                 </div>
-                {
-                  item
-                }
+                <form onSubmit={this.handleSubmit}>
+                    <input id="msg-box" type="text" placeholder="type here" name="msg" onChange={this.handleChange} />
+                    <button type="submit">Send</button>
+                </form>
             </div>
           </div>
           
         </div>
+        )
       )
     }
     
@@ -127,7 +150,8 @@ const mapStateToProps = (state) => {
     userData: state.currentUserData.userInfo,
     memberId: state.memberData,
     allMembers: state.allMembers,
-    messages: state.currentMember.allMsg
+    messages: state.currentMember.allMsg,
+    allChannels: state.allChannels
   }
 }
 

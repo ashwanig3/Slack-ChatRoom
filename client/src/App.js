@@ -15,7 +15,7 @@ class App extends Component {
             <Route path='/signup' exact component={Signup} />
             <Route path='/login' exact component={Login} />
             <Route path='/' exact component={Dashboard} />
-            <Route path='/direct/:name' exact component={DirectMessage} />
+            <Route path='/direct/:username' exact component={DirectMessage} />
           </Switch>
         </div>
       </BrowserRouter>

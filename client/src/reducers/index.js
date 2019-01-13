@@ -6,7 +6,8 @@ const initState = {
     currentMember: {
         allMsg: []
     },
-    directMsgs:[]
+    directMsgs:[],
+    allChannels: []
 }
 
 export default function rootReducer(state=initState, action) {
@@ -54,6 +55,13 @@ export default function rootReducer(state=initState, action) {
             return {
                 ...state,
                 directMsgs: action.data
+            }
+        }
+        case 'ALL_CHANNELS': {
+            console.log(action.data)
+            return {
+                ...state,
+                allChannels: action.data
             }
         }
         default:

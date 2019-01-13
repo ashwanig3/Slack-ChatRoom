@@ -139,3 +139,30 @@ export const signUpAction = (data) => {
       })
     }
   }
+
+  export function addChannels(data, cb) {
+    return dispatch => {
+      fetch(`${url}/channel`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        dispatch({type: 'ALL_CHANNELS', data: data.channels})
+        cb(true)
+      })
+    }
+  }
+
+  export function getAllChannels() {
+    return dispatch => {
+      fetch(`${url}/channel`)
+      .then(res => res.json())
+      .then(data => {
+        dispatch({type: 'ALL_CHANNELS', data: data.allChannels})
+      })
+    }
+  }

@@ -1,14 +1,14 @@
 const Message = require('./../models/Messages');
-const Member = require('./../models/Members');
 
 
 module.exports = {
     postMsg: (req, res) => {
+        console.log(req.body)
         const msgBody = req.body;
         const newMsg = new Message({
             msg: msgBody.msg,
-            memberId: msgBody.memberId,
-            memberName: msgBody.memberName
+            userId: msgBody.userId,
+            username: msgBody.username
         })
         newMsg.save((err, msg) => {
             if(err) {

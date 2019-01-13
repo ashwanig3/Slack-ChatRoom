@@ -74,5 +74,14 @@ module.exports = {
         res.status(200).json({
           msg : "Session is removed"
         })
-      }
+      },
+      getAllMembers: (req, res) => {
+        User.find((err, users) => {
+            if(err) {
+                throw err;
+            } else {
+                res.json({users})
+            }
+        })
+    }
     }

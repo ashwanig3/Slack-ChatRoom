@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const msgSchema = new Schema({
     msg: String,
-    memberId: {type: Schema.Types.ObjectId, ref: 'Member'},
-    memberName: String
+    userId: {type: Schema.Types.ObjectId, ref: 'User'},
+    username: String
 })
 
 const Message = mongoose.model('Message', msgSchema);

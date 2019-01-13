@@ -66,10 +66,12 @@ io.on('connection', function (socket) {
     // io.emit('userList', users, users[users.length].id);
   })
   socket.on('sendMsg', (data) => {
+    console.log(data, "check1")
     socket.emit('sendMsg', data)
   })
 
   socket.on('getMsg', (data) => {
+    console.log(data, "check2")
     socket.broadcast.to(users[data.to]).emit('getMsg', {
       msg: data.msg,
       from: data.from,
